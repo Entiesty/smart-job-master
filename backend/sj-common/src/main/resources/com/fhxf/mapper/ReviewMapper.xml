@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fhxf.mapper.ReviewMapper">
+
+    <resultMap id="ReviewVoResultMap" type="com.fhxf.domain.vo.ReviewVo">
+        <id property="id" column="id" />
+        <result property="content" column="content" />
+        <result property="rating" column="rating" />
+        <result property="createdAt" column="created_at" />
+        <!-- 映射 UserVo -->
+        <association property="fromUser" javaType="com.fhxf.domain.vo.UserVo">
+            <id property="id" column="userId" />
+            <result property="username" column="username" />
+            <result property="avatar" column="avatar" />
+        </association>
+    </resultMap>
+    <select id="listReviewVO" resultType="com.fhxf.domain.vo.ReviewVo" resultMap="ReviewVoResultMap">
+        SELECT
+            r.id,
+            r.content,
+            r.rating,
+            r.created_at,
+            u.username,
+            u.avatar,
+            u.id AS userId
+        FROM
+            review r
+                LEFT JOIN user u ON r.from_user_id = u.id
+         ${ew.customSqlSegment}
+    </select>
+</mapper>

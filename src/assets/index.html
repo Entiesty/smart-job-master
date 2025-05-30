@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧零工平台 - 原型设计</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/element-plus"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 导航样式 */
+        .navbar {
+            background-color: #409EFF;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        /* 页面标题 */
+        .page-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        /* 卡片样式 */
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #409EFF;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        /* 按钮样式 */
+        .primary-btn {
+            background-color: #409EFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .primary-btn:hover {
+            background-color: #66b1ff;
+        }
+        
+        .secondary-btn {
+            background-color: white;
+            color: #409EFF;
+            border: 1px solid #409EFF;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .secondary-btn:hover {
+            background-color: #ecf5ff;
+        }
+        
+        /* 标签样式 */
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .tag-primary {
+            background-color: #ecf5ff;
+            color: #409EFF;
+            border: 1px solid #d9ecff;
+        }
+        
+        .tag-success {
+            background-color: #f0f9eb;
+            color: #67c23a;
+            border: 1px solid #e1f3d8;
+        }
+        
+        .tag-warning {
+            background-color: #fdf6ec;
+            color: #e6a23c;
+            border: 1px solid #faecd8;
+        }
+        
+        /* 分页样式 */
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        /* 工作卡片 */
+        .job-card {
+            border: 1px solid #ebeef5;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .job-card:hover {
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+        }
+        
+        .job-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .job-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .job-meta-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .job-meta-item i {
+            margin-right: 5px;
+            color: #409EFF;
+        }
+        
+        .job-description {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .job-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .job-price {
+            font-size: 18px;
+            font-weight: 600;
+            color: #f56c6c;
+        }
+        
+        /* 工作者卡片 */
+        .worker-card {
+            border: 1px solid #ebeef5;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .worker-card:hover {
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+        }
+        
+        .worker-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .worker-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+        
+        .worker-info {
+            flex: 1;
+        }
+        
+        .worker-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .worker-title {
+            color: #409EFF;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .worker-rating {
+            display: flex;
+            align-items: center;
+            color: #e6a23c;
+            font-size: 14px;
+        }
+        
+        .worker-skills {
+            margin-bottom: 15px;
+        }
+        
+        .worker-bio {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .worker-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .worker-rate {
+            font-size: 18px;
+            font-weight: 600;
+            color: #f56c6c;
+        }
+        
+        /* 仪表盘统计卡片 */
+        .stats-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .stats-value {
+            font-size: 28px;
+            font-weight: 600;
+            margin: 10px 0;
+            color: #409EFF;
+        }
+        
+        .stats-label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        /* 消息卡片 */
+        .message-card {
+            border: 1px solid #ebeef5;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .message-card:hover {
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+        }
+        
+        .message-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+        
+        .message-info {
+            flex: 1;
+        }
+        
+        .message-sender {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        
+        .message-time {
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .message-preview {
+            color: #666;
+            font-size: 14px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        /* 评价卡片 */
+        .review-card {
+            border: 1px solid #ebeef5;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .review-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .review-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+        
+        .review-info {
+            flex: 1;
+        }
+        
+        .review-name {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        
+        .review-rating {
+            color: #e6a23c;
+            font-size: 14px;
+        }
+        
+        .review-time {
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .review-content {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        /* 时间线样式 */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-bottom: 20px;
+            border-left: 2px solid #ebeef5;
+            padding-left: 20px;
+        }
+        
+        .timeline-item:last-child {
+            border-left: 2px solid transparent;
+        }
+        
+        .timeline-dot {
+            position: absolute;
+            left: -9px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #409EFF;
+        }
+        
+        .timeline-time {
+            color: #999;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        
+        .timeline-content {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        /* 页面切换样式 */
+        .page-section {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        .page-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* 响应式布局 */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .job-meta {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .worker-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .worker-avatar {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- 导航栏 -->
+        <div class="navbar">
+            <div class="navbar-container">
+                <div class="logo">智慧零工平台</div>
+                <div class="nav-links">
+                    <a href="#" class="nav-link" @click="switchPage('dashboard')">首页</a>
+                    <a href="#" class="nav-link" @click="switchPage('jobs')">工作机会</a>
+                    <a href="#" class="nav-link" @click="switchPage('workers')">工作者</a>
+                    <a href="#" class="nav-link" @click="switchPage('messages')">消息</a>
+                    <a href="#" class="nav-link" @click="switchPage('profile')">个人中心</a>
+                </div>
+                <el-dropdown trigger="click">
+                    <img src="https://randomuser.me/api/portraits/women/44.jpg" class="user-avatar">
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item @click="switchPage('profile')">个人资料</el-dropdown-item>
+                            <el-dropdown-item @click="switchPage('settings')">账户设置</el-dropdown-item>
+                            <el-dropdown-item divided @click="logout">退出登录</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
+            </div>
+        </div>
+        
+        <div class="container">
+            <!-- 仪表盘页面 -->
+            <div class="page-section" :class="{active: currentPage === 'dashboard'}">
+                <h1 class="page-title">欢迎回来，{{ user.name }}！</h1>
+                
+                <div class="row">
+                    <el-col :span="6">
+                        <div class="stats-card">
+                            <div class="stats-label">进行中的工作</div>
+                            <div class="stats-value">3</div>
+                            <el-progress :percentage="60" :stroke-width="8" :show-text="false"></el-progress>
+                        </div>
+                    </el-col>
+                    <el-col :span="6">
+                        <div class="stats-card">
+                            <div class="stats-label">已完成工作</div>
+                            <div class="stats-value">12</div>
+                            <el-progress :percentage="100" status="success" :stroke-width="8" :show-text="false"></el-progress>
+                        </div>
+                    </el-col>
+                    <el-col :span="6">
+                        <div class="stats-card">
+                            <div class="stats-label">总收入</div>
+                            <div class="stats-value">¥8,500</div>
+                            <el-progress :percentage="85" status="warning" :stroke-width="8" :show-text="false"></el-progress>
+                        </div>
+                    </el-col>
+                    <el-col :span="6">
+                        <div class="stats-card">
+                            <div class="stats-label">客户评价</div>
+                            <div class="stats-value">4.8</div>
+                            <el-rate v-model="rating" disabled show-score :colors="['#99A9BF', '#F7BA2A', '#FF9900']"></el-rate>
+                        </div>
+                    </el-col>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">
+                        <span>近期工作</span>
+                        <el-button type="primary" size="small" @click="switchPage('jobs')">查看全部</el-button>
+                    </div>
+                    
+                    <div class="job-card" v-for="job in recentJobs" :key="job.id">
+                        <div class="job-title">{{ job.title }}</div>
+                        <div class="job-meta">
+                            <div class="job-meta-item"><i class="el-icon-location"></i> {{ job.location }}</div>
+                            <div class="job-meta-item"><i class="el-icon-time"></i> {{ job.date }}</div>
+                            <div class="job-meta-item"><i class="el-icon-user"></i> {{ job.client }}</div>
+                        </div>
+                        <div class="job-description">{{ job.description }}</div>
+                        <div class="job-footer">
+                            <div>
+                                <el-tag type="primary" size="small" v-for="tag in job.tags" :key="tag">{{ tag }}</el-tag>
+                            </div>
+                            <div class="job-price">{{ job.price }}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <el-col :span="12">
+                        <div class="card">
+                            <div class="card-title">消息通知</div>
+                            <div class="message-card" v-for="message in messages" :key="message.id">
+                                <div class="message-header">
+                                    <img :src="message.avatar" class="message-avatar">
+                                    <div class="message-info">
+                                        <div class="message-sender">{{ message.sender }}</div>
+                                        <div class="message-time">{{ message.time }}</div>
+                                    </div>
+                                </div>
+                                <div class="message-preview">{{ message.content }}</div>
+                            </div>
+                        </div>
+                    </el-col>
+                    <el-col :span="12">
+                        <div class="card">
+                            <div class="card-title">工作进度</div>
+                            <div class="timeline">
+                                <div class="timeline-item" v-for="event in timeline" :key="event.id">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">{{ event.time }}</div>
+                                    <div class="timeline-content">{{ event.content }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </el-col>
+                </div>
+            </div>
+            
+            <!-- 工作机会页面 -->
+            <div class="page-section" :class="{active: currentPage === 'jobs'}">
+                <h1 class="page-title">工作机会</h1>
+                
+                <div class="card">
+                    <div class="card-title">
+                        <span>筛选工作</span>
+                    </div>
+                    
+                    <el-form :inline="true" :model="jobFilter" class="demo-form-inline">
+                        <el-form-item label="工作类型">
+                            <el-select v-model="jobFilter.type" placeholder="选择工作类型" clearable>
+                                <el-option label="设计创意" value="design"></el-option>
+                                <el-option label="技术开发" value="tech"></el-option>
+                                <el-option label="写作翻译" value="writing"></el-option>
+                                <el-option label="营销推广" value="marketing"></el-option>
+                                <el-option label="生活服务" value="life"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="预算范围">
+                            <el-select v-model="jobFilter.budget" placeholder="选择预算范围" clearable>
+                                <el-option label="500元以下" value="0-500"></el-option>
+                                <el-option label="500-1000元" value="500-1000"></el-option>
+                                <el-option label="1000-3000元" value="1000-3000"></el-option>
+                                <el-option label="3000元以上" value="3000+"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="工作地点">
+                            <el-select v-model="jobFilter.location" placeholder="选择工作地点" clearable>
+                                <el-option label="远程" value="remote"></el-option>
+                                <el-option label="北京" value="beijing"></el-option>
+                                <el-option label="上海" value="shanghai"></el-option>
+                                <el-option label="广州" value="guangzhou"></el-option>
+                                <el-option label="深圳" value="shenzhen"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="searchJobs">搜索</el-button>
+                            <el-button @click="resetJobFilter">重置</el-button>
+                        </el-form-item>
+                    </el-form>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">
+                        <span>工作列表</span>
+                        <el-button type="primary" size="small" @click="showPostJobDialog = true">发布工作</el-button>
+                    </div>
+                    
+                    <div class="job-card" v-for="job in filteredJobs" :key="job.id" @click="viewJobDetail(job)">
+                        <div class="job-title">{{ job.title }}</div>
+                        <div class="job-meta">
+                            <div class="job-meta-item"><i class="el-icon-location"></i> {{ job.location }}</div>
+                            <div class="job-meta-item"><i class="el-icon-time"></i> {{ job.date }}</div>
+                            <div class="job-meta-item"><i class="el-icon-user"></i> {{ job.client }}</div>
+                        </div>
+                        <div class="job-description">{{ job.description }}</div>
+                        <div class="job-footer">
+                            <div>
+                                <el-tag type="primary" size="small" v-for="tag in job.tags" :key="tag">{{ tag }}</el-tag>
+                            </div>
+                            <div class="job-price">{{ job.price }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="pagination">
+                        <el-pagination
+                            layout="prev, pager, next"
+                            :total="50"
+                            :page-size="10"
+                            @current-change="handleJobPageChange">
+                        </el-pagination>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 工作者页面 -->
+            <div class="page-section" :class="{active: currentPage === 'workers'}">
+                <h1 class="page-title">寻找工作者</h1>
+                
+                <div class="card">
+                    <div class="card-title">
+                        <span>筛选工作者</span>
+                    </div>
+                    
+                    <el-form :inline="true" :model="workerFilter" class="demo-form-inline">
+                        <el-form-item label="技能领域">
+                            <el-select v-model="workerFilter.skill" placeholder="选择技能领域" clearable>
+                                <el-option label="UI/UX设计" value="design"></el-option>
+                                <el-option label="前端开发" value="frontend"></el-option>
+                                <el-option label="后端开发" value="backend"></el-option>
+                                <el-option label="文案写作" value="copywriting"></el-option>
+                                <el-option label="市场营销" value="marketing"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="评分">
+                            <el-select v-model="workerFilter.rating" placeholder="选择最低评分" clearable>
+                                <el-option label="4.5分以上" value="4.5"></el-option>
+                                <el-option label="4.0分以上" value="4.0"></el-option>
+                                <el-option label="3.5分以上" value="3.5"></el-option>
+                                <el-option label="3.0分以上" value="3.0"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="时薪范围">
+                            <el-select v-model="workerFilter.rate" placeholder="选择时薪范围" clearable>
+                                <el-option label="100元以下" value="0-100"></el-option>
+                                <el-option label="100-200元" value="100-200"></el-option>
+                                <el-option label="200-300元" value="200-300"></el-option>
+                                <el-option label="300元以上" value="300+"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="searchWorkers">搜索</el-button>
+                            <el-button @click="resetWorkerFilter">重置</el-button>
+                        </el-form-item>
+                    </el-form>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">
+                        <span>工作者列表</span>
+                    </div>
+                    
+                    <div class="worker-card" v-for="worker in filteredWorkers" :key="worker.id" @click="viewWorkerDetail(worker)">
+                        <div class="worker-header">
+                            <img :src="worker.avatar" class="worker-avatar">
+                            <div class="worker-info">
+                                <div class="worker-name">{{ worker.name }}</div>
+                                <div class="worker-title">{{ worker.title }}</div>
+                                <div class="worker-rating">
+                                    <el-rate v-model="worker.rating" disabled show-score text-color="#ff9900" score-template="{value}"></el-rate>
+                                    <span style="margin-left: 5px;">({{ worker.reviews }}条评价)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="worker-skills">
+                            <el-tag type="primary" size="small" v-for="skill in worker.skills" :key="skill">{{ skill }}</el-tag>
+                        </div>
+                        <div class="worker-bio">{{ worker.bio }}</div>
+                        <div class="worker-footer">
+                            <div>
+                                <el-tag type="success" size="small">已完成 {{ worker.completedJobs }} 个工作</el-tag>
+                            </div>
+                            <div class="worker-rate">{{ worker.rate }}/小时</div>
+                        </div>
+                    </div>
+                    
+                    <div class="pagination">
+                        <el-pagination
+                            layout="prev, pager, next"
+                            :total="50"
+                            :page-size="10"
+                            @current-change="handleWorkerPageChange">
+                        </el-pagination>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 消息页面 -->
+            <div class="page-section" :class="{active: currentPage === 'messages'}">
+                <h1 class="page-title">消息中心</h1>
+                
+                <div class="row">
+                    <el-col :span="8">
+                        <div class="card">
+                            <div class="card-title">
+                                <span>对话列表</span>
+                            </div>
+                            
+                            <div class="message-card" v-for="message in messages" :key="message.id" @click="selectConversation(message)">
+                                <div class="message-header">
+                                    <img :src="message.avatar" class="message-avatar">
+                                    <div class="message-info">
+                                        <div class="message-sender">{{ message.sender }}</div>
+                                        <div class="message-time">{{ message.time }}</div>
+                                    </div>
+                                </div>
+                                <div class="message-preview">{{ message.content }}</div>
+                            </div>
+                        </div>
+                    </el-col>
+                    <el-col :span="16">
+                        <div class="card" v-if="selectedConversation">
+                            <div class="card-title">
+                                <span>与 {{ selectedConversation.sender }} 的对话</span>
+                            </div>
+                            
+                            <div style="height: 400px; overflow-y: auto; margin-bottom: 20px; border-bottom: 1px solid #ebeef5; padding-bottom: 20px;">
+                                <div v-for="msg in conversationMessages" :key="msg.id" style="margin-bottom: 15px;">
+                                    <div style="display: flex; align-items: flex-start; margin-bottom: 5px;" :style="{flexDirection: msg.isMe ? 'row-reverse' : 'row'}">
+                                        <img :src="msg.avatar" style="width: 40px; height: 40px; border-radius: 50%; margin: 0 10px;">
+                                        <div :style="{backgroundColor: msg.isMe ? '#ecf5ff' : '#f5f5f5', padding: '10px 15px', borderRadius: '4px', maxWidth: '70%'}">
+                                            <div style="color: #666; font-size: 14px;">{{ msg.content }}</div>
+                                            <div style="color: #999; font-size: 12px; text-align: right; margin-top: 5px;">{{ msg.time }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <el-input
+                                type="textarea"
+                                :rows="3"
+                                placeholder="输入消息内容"
+                                v-model="newMessage">
+                            </el-input>
+                            <div style="margin-top: 10px; text-align: right;">
+                                <el-button type="primary" @click="sendMessage">发送</el-button>
+                            </div>
+                        </div>
+                        <div class="card" v-else style="height: 500px; display: flex; align-items: center; justify-content: center;">
+                            <div style="text-align: center; color: #999;">
+                                <i class="el-icon-chat-dot-round" style="font-size: 50px; margin-bottom: 15px;"></i>
+                                <div>请从左侧选择对话</div>
+                            </div>
+                        </div>
+                    </el-col>
+                </div>
+            </div>
+            
+            <!-- 个人资料页面 -->
+            <div class="page-section" :class="{active: currentPage === 'profile'}">
+                <h1 class="page-title">个人资料</h1>
+                
+                <div class="row">
+                    <el-col :span="8">
+                        <div class="card">
+                            <div style="text-align: center; padding: 20px 0;">
+                                <img src="https://randomuser.me/api/portraits/women/44.jpg" style="width: 120px; height: 120px; border-radius: 50%; margin-bottom: 15px;">
+                                <div style="font-size: 18px; font-weight: 600; margin-bottom: 5px;">{{ user.name }}</div>
+                                <div style="color: #409EFF; margin-bottom: 15px;">{{ user.title }}</div>
+                                <el-rate v-model="user.rating" disabled show-score text-color="#ff9900" score-template="{value}"></el-rate>
+                            </div>
+                            
+                            <div style="padding: 0 20px 20px;">
+                                <div style="margin-bottom: 15px;">
+                                    <div style="color: #999; font-size: 14px; margin-bottom: 5px;">个人简介</div>
+                                    <div style="color: #666; line-height: 1.6;">{{ user.bio }}</div>
+                                </div>
+                                
+                                <div style="margin-bottom: 15px;">
+                                    <div style="color: #999; font-size: 14px; margin-bottom: 5px;">技能标签</div>
+                                    <div>
+                                        <el-tag type="primary" style="margin-right: 5px; margin-bottom: 5px;" v-for="skill in user.skills" :key="skill">{{ skill }}</el-tag>
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-bottom: 15px;">
+                                    <div style="color: #999; font-size: 14px; margin-bottom: 5px;">联系方式</div>
+                                    <div style="color: #666;">
+                                        <div style="margin-bottom: 5px;"><i class="el-icon-message" style="margin-right: 5px;"></i> {{ user.email }}</div>
+                                        <div style="margin-bottom: 5px;"><i class="el-icon-phone" style="margin-right: 5px;"></i> {{ user.phone }}</div>
+                                        <div><i class="el-icon-location" style="margin-right: 5px;"></i> {{ user.location }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </el-col>
+                    <el-col :span="16">
+                        <div class="card">
+                            <div class="card-title">工作统计</div>
+                            
+                            <div style="margin-bottom: 30px;">
+                                <el-tabs v-model="activeStatTab">
+                                    <el-tab-pane label="已完成工作" name="completed">
+                                        <div style="height: 300px; display: flex; align-items: center; justify-content: center; color: #999;">
+                                            工作完成统计图表
+                                        </div>
+                                    </el-tab-pane>
+                                    <el-tab-pane label="收入统计" name="income">
+                                        <div style="height: 300px; display: flex; align-items: center; justify-content: center; color: #999;">
+                                            收入统计图表
+                                        </div>
+                                    </el-tab-pane>
+                                    <el-tab-pane label="客户评价" name="reviews">
+                                        <div style="height: 300px; display: flex; align-items: center; justify-content: center; color: #999;">
+                                            客户评价统计图表
+                                        </div>
+                                    </el-tab-pane>
+                                </el-tabs>
+                            </div>
+                            
+                            <div class="card-title">最近评价</div>
+                            
+                            <div class="review-card" v-for="review in user.reviews" :key="review.id">
+                                <div class="review-header">
+                                    <img :src="review.avatar" class="review-avatar">
+                                    <div class="review-info">
+                                        <div class="review-name">{{ review.name }}</div>
+                                        <div class="review-rating">
+                                            <el-rate v-model="review.rating" disabled show-score text-color="#ff9900" score-template="{value}"></el-rate>
+                                        </div>
+                                        <div class="review-time">{{ review.time }}</div>
+                                    </div>
+                                </div>
+                                <div class="review-content">{{ review.content }}</div>
+                            </div>
+                        </div>
+                    </el-col>
+                </div>
+            </div>
+            
+            <!-- 账户设置页面 -->
+            <div class="page-section" :class="{active: currentPage === 'settings'}">
+                <h1 class="page-title">账户设置</h1>
+                
+                <div class="card">
+                    <div class="card-title">基本信息</div>
+                    
+                    <el-form :model="userForm" label-width="100px" style="max-width: 600px;">
+                        <el-form-item label="姓名">
+                            <el-input v-model="userForm.name"></el-input>
+                        </el-form-item>
+                        <el-form-item label="职业头衔">
+                            <el-input v-model="userForm.title"></el-input>
+                        </el-form-item>
+                        <el-form-item label="个人简介">
+                            <el-input type="textarea" v-model="userForm.bio" :rows="4"></el-input>
+                        </el-form-item>
+                        <el-form-item label="技能标签">
+                            <el-tag
+                                v-for="tag in userForm.skills"
+                                :key="tag"
+                                closable
+                                @close="handleSkillClose(tag)">
+                                {{ tag }}
+                            </el-tag>
+                            <el-input
+                                class="input-new-tag"
+                                v-if="skillInputVisible"
+                                v-model="skillInputValue"
+                                ref="saveTagInput"
+                                size="small"
+                                @keyup.enter="handleSkillInputConfirm"
+                                @blur="handleSkillInputConfirm">
+                            </el-input>
+                            <el-button v-else class="button-new-tag" size="small" @click="showSkillInput">+ 添加技能</el-button>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="saveProfile">保存修改</el-button>
+                        </el-form-item>
+                    </el-form>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">联系方式</div>
+                    
+                    <el-form :model="contactForm" label-width="100px" style="max-width: 600px;">
+                        <el-form-item label="电子邮箱">
+                            <el-input v-model="contactForm.email"></el-input>
+                        </el-form-item>
+                        <el-form-item label="手机号码">
+                            <el-input v-model="contactForm.phone"></el-input>
+                        </el-form-item>
+                        <el-form-item label="所在城市">
+                            <el-select v-model="contactForm.location" placeholder="请选择城市">
+                                <el-option label="北京" value="beijing"></el-option>
+                                <el-option label="上海" value="shanghai"></el-option>
+                                <el-option label="广州" value="guangzhou"></el-option>
+                                <el-option label="深圳" value="shenzhen"></el-option>
+                                <el-option label="其他" value="other"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="saveContact">保存修改</el-button>
+                        </el-form-item>
+                    </el-form>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">账户安全</div>
+                    
+                    <el-form label-width="100px" style="max-width: 600px;">
+                        <el-form-item label="当前密码">
+                            <el-input type="password" v-model="securityForm.currentPassword"></el-input>
+                        </el-form-item>
+                        <el-form-item label="新密码">
+                            <el-input type="password" v-model="securityForm.newPassword"></el-input>
+                        </el-form-item>
+                        <el-form-item label="确认密码">
+                            <el-input type="password" v-model="securityForm.confirmPassword"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="changePassword">修改密码</el-button>
+                        </el-form-item>
+                    </el-form>
+                </div>
+            </div>
+            
+            <!-- 工作详情对话框 -->
+            <el-dialog v-model="jobDetailVisible" title="工作详情" width="60%">
+                <div v-if="selectedJob">
+                    <h2 style="margin-bottom: 15px;">{{ selectedJob.title }}</h2>
+                    <div style="display: flex; margin-bottom: 15px;">
+                        <div style="flex: 1;">
+                            <div style="color: #666; margin-bottom: 5px;"><i class="el-icon-user" style="margin-right: 5px;"></i> 发布者: {{ selectedJob.client }}</div>
+                            <div style="color: #666; margin-bottom: 5px;"><i class="el-icon-location" style="margin-right: 5px;"></i> 地点: {{ selectedJob.location }}</div>
+                            <div style="color: #666; margin-bottom: 5px;"><i class="el-icon-time" style="margin-right: 5px;"></i> 发布时间: {{ selectedJob.date }}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 24px; font-weight: 600; color: #f56c6c;">{{ selectedJob.price }}</div>
+                            <el-tag type="success" style="margin-top: 5px;">{{ selectedJob.status }}</el-tag>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <el-tag type="primary" style="margin-right: 5px; margin-bottom: 5px;" v-for="tag in selectedJob.tags" :key="tag">{{ tag }}</el-tag>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 10px;">工作描述</h3>
+                        <div style="color: #666; line-height: 1.6;">{{ selectedJob.description }}</div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 10px;">工作要求</h3>
+                        <div style="color: #666; line-height: 1.6;">{{ selectedJob.requirements }}</div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 10px;">工作附件</h3>
+                        <el-link type="primary" :underline="false" style="margin-right: 15px;"><i class="el-icon-document" style="margin-right: 5px;"></i> 需求文档.pdf</el-link>
+                        <el-link type="primary" :underline="false"><i class="el-icon-picture" style="margin-right: 5px;"></i> 参考图片.zip</el-link>
+                    </div>
+                    
+                    <div v-if="user.role === 'worker'">
+                        <h3 style="margin-bottom: 10px;">申请工作</h3>
+                        <el-form :model="jobApplication" label-width="80px">
+                            <el-form-item label="报价">
+                                <el-input-number v-model="jobApplication.price" :min="100" :step="100" controls-position="right" style="width: 200px;"></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="预计完成">
+                                <el-input-number v-model="jobApplication.days" :min="1" :max="30" controls-position="right" style="width: 200px;"></el-input-number>
+                                <span style="margin-left: 10px;">天</span>
+                            </el-form-item>
+                            <el-form-item label="申请说明">
+                                <el-input type="textarea" v-model="jobApplication.message" :rows="4"></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </div>
+                </div>
+                
+                <template #footer>
+                    <span class="dialog-footer">
+                        <el-button @click="jobDetailVisible = false">取消</el-button>
+                        <el-button type="primary" @click="applyJob" v-if="user.role === 'worker'">申请工作</el-button>
+                        <el-button type="primary" @click="saveJob" v-if="user.role === 'employer' && selectedJob.isMine">保存修改</el-button>
+                    </span>
+                </template>
+            </el-dialog>
+            
+            <!-- 工作者详情对话框 -->
+            <el-dialog v-model="workerDetailVisible" title="工作者详情" width="60%">
+                <div v-if="selectedWorker">
+                    <div style="display: flex; margin-bottom: 20px;">
+                        <img :src="selectedWorker.avatar" style="width: 100px; height: 100px; border-radius: 50%; margin-right: 20px;">
+                        <div style="flex: 1;">
+                            <h2 style="margin-bottom: 5px;">{{ selectedWorker.name }}</h2>
+                            <div style="color: #409EFF; margin-bottom: 10px;">{{ selectedWorker.title }}</div>
+                            <div style="margin-bottom: 10px;">
+                                <el-rate v-model="selectedWorker.rating" disabled show-score text-color="#ff9900" score-template="{value} 分"></el-rate>
+                                <span style="color: #666; margin-left: 10px;">({{ selectedWorker.reviews }}条评价)</span>
+                            </div>
+                            <div style="color: #666;">
+                                <div style="margin-bottom: 5px;"><i class="el-icon-location" style="margin-right: 5px;"></i> {{ selectedWorker.location }}</div>
+                                <div><i class="el-icon-suitcase" style="margin-right: 5px;"></i> 已完成 {{ selectedWorker.completedJobs }} 个工作</div>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 24px; font-weight: 600; color: #f56c6c;">{{ selectedWorker.rate }}/小时</div>
+                            <el-button type="primary" style="margin-top: 10px;" @click="showInviteDialog">邀请工作</el-button>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 10px;">技能标签</h3>
+                        <div>
+                            <el-tag type="primary" style="margin-right: 5px; margin-bottom: 5px;" v-for="skill in selectedWorker.skills" :key="skill">{{ skill }}</el-tag>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 10px;">个人简介</h3>
+                        <div style="color: #666; line-height: 1.6;">{{ selectedWorker.bio }}</div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 10px;">工作经历</h3>
+                        <div style="color: #666; line-height: 1.6;">
+                            <div style="margin-bottom: 10px;" v-for="exp in selectedWorker.experience" :key="exp.id">
+                                <div style="font-weight: 600;">{{ exp.position }} - {{ exp.company }}</div>
+                                <div style="color: #999; font-size: 13px; margin-bottom: 5px;">{{ exp.period }}</div>
+                                <div>{{ exp.description }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 10px;">作品展示</h3>
+                        <el-row :gutter="10">
+                            <el-col :span="8" v-for="work in selectedWorker.portfolio" :key="work.id" style="margin-bottom: 10px;">
+                                <el-card :body-style="{ padding: '0px' }" shadow="hover">
+                                    <img :src="work.image" style="width: 100%; height: 120px; object-fit: cover;">
+                                    <div style="padding: 10px;">
+                                        <div style="font-weight: 600; margin-bottom: 5px;">{{ work.title }}</div>
+                                        <div style="color: #666; font-size: 13px;">{{ work.description }}</div>
+                                    </div>
+                                </el-card>
+                            </el-col>
+                        </el-row>
+                    </div>
+                    
+                    <div>
+                        <h3 style="margin-bottom: 10px;">客户评价</h3>
+                        <div class="review-card" v-for="review in selectedWorker.reviewList" :key="review.id">
+                            <div class="review-header">
+                                <img :src="review.avatar" class="review-avatar">
+                                <div class="review-info">
+                                    <div class="review-name">{{ review.name }}</div>
+                                    <div class="review-rating">
+                                        <el-rate v-model="review.rating" disabled show-score text-color="#ff9900" score-template="{value}"></el-rate>
+                                    </div>
+                                    <div class="review-time">{{ review.time }}</div>
+                                </div>
+                            </div>
+                            <div class="review-content">{{ review.content }}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <template #footer>
+                    <span class="dialog-footer">
+                        <el-button @click="workerDetailVisible = false">关闭</el-button>
+                        <el-button type="primary" @click="sendMessageToWorker">发送消息</el-button>
+                    </span>
+                </template>
+            </el-dialog>
+            
+            <!-- 发布工作对话框 -->
+            <el-dialog v-model="showPostJobDialog" title="发布新工作" width="60%">
+                <el-form :model="newJob" label-width="100px">
+                    <el-form-item label="工作标题" required>
+                        <el-input v-model="newJob.title" placeholder="请输入工作标题"></el-input>
+                    </el-form-item>
+                    <el-form-item label="工作类型" required>
+                        <el-select v-model="newJob.type" placeholder="请选择工作类型">
+                            <el-option label="设计创意" value="design"></el-option>
+                            <el-option label="技术开发" value="tech"></el-option>
+                            <el-option label="写作翻译" value="writing"></el-option>
+                            <el-option label="营销推广" value="marketing"></el-option>
+                            <el-option label="生活服务" value="life"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="工作预算" required>
+                        <el-input-number v-model="newJob.budget" :min="100" :step="100" controls-position="right" style="width: 200px;"></el-input-number>
+                    </el-form-item>
+                    <el-form-item label="工作地点">
+                        <el-select v-model="newJob.location" placeholder="请选择工作地点">
+                            <el-option label="远程" value="remote"></el-option>
+                            <el-option label="北京" value="beijing"></el-option>
+                            <el-option label="上海" value="shanghai"></el-option>
+                            <el-option label="广州" value="guangzhou"></el-option>
+                            <el-option label="深圳" value="shenzhen"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="工作描述" required>
+                        <el-input type="textarea" v-model="newJob.description" :rows="4" placeholder="请详细描述工作内容和要求"></el-input>
+                    </el-form-item>
+                    <el-form-item label="工作要求">
+                        <el-input type="textarea" v-model="newJob.requirements" :rows="3" placeholder="请列出对工作者的要求"></el-input>
+                    </el-form-item>
+                    <el-form-item label="工作标签">
+                        <el-tag
+                            v-for="tag in newJob.tags"
+                            :key="tag"
+                            closable
+                            @close="handleJobTagClose(tag)">
+                            {{ tag }}
+                        </el-tag>
+                        <el-input
+                            class="input-new-tag"
+                            v-if="jobTagInputVisible"
+                            v-model="jobTagInputValue"
+                            ref="saveJobTagInput"
+                            size="small"
+                            @keyup.enter="handleJobTagInputConfirm"
+                            @blur="handleJobTagInputConfirm">
+                        </el-input>
+                        <el-button v-else class="button-new-tag" size="small" @click="showJobTagInput">+ 添加标签</el-button>
+                    </el-form-item>
+                    <el-form-item label="附件上传">
+                        <el-upload
+                            action="https://jsonplaceholder.typicode.com/posts/"
+                            multiple
+                            :limit="3"
+                            :on-exceed="handleExceed"
+                            :file-list="fileList">
+                            <el-button type="primary">点击上传</el-button>
+                            <template #tip>
+                                <div class="el-upload__tip">可上传需求文档、参考图片等，不超过5MB</div>
+                            </template>
+                        </el-upload>
+                    </el-form-item>
+                </el-form>
+                
+                <template #footer>
+                    <span class="dialog-footer">
+                        <el-button @click="showPostJobDialog = false">取消</el-button>
+                        <el-button type="primary" @click="postNewJob">发布工作</el-button>
+                    </span>
+                </template>
+            </el-dialog>
+            
+            <!-- 邀请工作对话框 -->
+            <el-dialog v-model="showInviteDialog" title="邀请工作" width="50%">
+                <el-form :model="inviteForm" label-width="100px">
+                    <el-form-item label="工作者">
+                        <el-input v-model="selectedWorker.name" disabled></el-input>
+                    </el-form-item>
+                    <el-form-item label="工作标题" required>
+                        <el-input v-model="inviteForm.title" placeholder="请输入工作标题"></el-input>
+                    </el-form-item>
+                    <el-form-item label="工作预算" required>
+                        <el-input-number v-model="inviteForm.budget" :min="100" :step="100" controls-position="right" style="width: 200px;"></el-input-number>
+                    </el-form-item>
+                    <el-form-item label="预计完成">
+                        <el-input-number v-model="inviteForm.days" :min="1" :max="30" controls-position="right" style="width: 200px;"></el-input-number>
+                        <span style="margin-left: 10px;">天</span>
+                    </el-form-item>
+                    <el-form-item label="工作描述" required>
+                        <el-input type="textarea" v-model="inviteForm.description" :rows="4" placeholder="请详细描述工作内容和要求"></el-input>
+                    </el-form-item>
+                    <el-form-item label="邀请说明">
+                        <el-input type="textarea" v-model="inviteForm.message" :rows="3" placeholder="可填写对工作者的特别要求或其他说明"></el-input>
+                    </el-form-item>
+                </el-form>
+                
+                <template #footer>
+                    <span class="dialog-footer">
+                        <el-button @click="showInviteDialog = false">取消</el-button>
+                        <el-button type="primary" @click="sendInvitation">发送邀请</el-button>
+                    </span>
+                </template>
+            </el-dialog>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref } = Vue;
+        
+        createApp({
+            setup() {
+                // 当前页面状态
+                const currentPage = ref('dashboard');
+                
+                // 用户信息
+                const user = ref({
+                    id: 1,
+                    name: '张晓丽',
+                    title: 'UI/UX设计师',
+                    avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+                    email: 'zhangxiaoli@example.com',
+                    phone: '13800138000',
+                    location: '北京',
+                    bio: '5年UI/UX设计经验，擅长移动端和网页设计，曾为多家知名企业提供设计服务。注重用户体验，追求细节完美。',
+                    skills: ['UI设计', 'UX设计', '移动端设计', '网页设计', '原型设计'],
+                    rating: 4.8,
+                    reviews: 12,
+                    completedJobs: 15,
+                    rate: '¥200',
+                    role: 'worker' // 'worker' or 'employer'
+                });
+                
+                // 切换页面
+                const switchPage = (page) => {
+                    currentPage.value = page;
+                };
+                
+                // 登出
+                const logout = () => {
+                    ElMessage.success('已退出登录');
+                    // 实际应用中这里应该跳转到登录页面
+                };
+                
+                // 仪表盘数据
+                const rating = ref(4.8);
+                
+                const recentJobs = ref([
+                    {
+                        id: 1,
+                        title: '移动端APP界面设计',
+                        location: '远程',
+                        date: '2023-05-15',
+                        client: 'ABC科技有限公司',
+                        description: '为新产品设计移动端APP界面，包括登录页、主页、个人中心等核心页面。要求设计简洁现代，符合产品定位。',
+                        tags: ['UI设计', '移动端', '高保真原型'],
+                        price: '¥3,000'
+                    },
+                    {
+                        id: 2,
+                        title: '企业官网改版设计',
+                        location: '北京',
+                        date: '2023-05-10',
+                        client: 'XYZ企业',
+                        description: '对企业官网进行全新改版设计，包括首页、产品页、关于我们等页面。要求体现企业品牌形象，提升用户体验。',
+                        tags: ['网页设计', '响应式', '品牌设计'],
+                        price: '¥5,000'
+                    },
+                    {
+                        id: 3,
+                        title: '电商平台UX优化',
+                        location: '远程',
+                        date: '2023-05-05',
+                        client: '电商平台',
+                        description: '对现有电商平台进行UX优化，分析用户行为数据，提出改进方案并设计原型。需要有相关电商设计经验。',
+                        tags: ['UX设计', '用户研究', '原型设计'],
+                        price: '¥4,500'
+                    }
+                ]);
+                
+                const messages = ref([
+                    {
+                        id: 1,
+                        sender: '李经理',
+                        avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+                        time: '10分钟前',
+                        content: '您好，关于我们APP设计的项目，有几个细节想和您讨论一下，请问什么时候方便？'
+                    },
+                    {
+                        id: 2,
+                        sender: '王总监',
+                        avatar: 'https://randomuser.me/api/portraits/women/22.jpg',
+                        time: '2小时前',
+                        content: '您提交的官网设计方案我们已经看过，整体很满意，有一些小的修改意见想和您沟通。'
+                    },
+                    {
+                        id: 3,
+                        sender: '系统通知',
+                        avatar: 'https://randomuser.me/api/portraits/lego/1.jpg',
+                        time: '昨天',
+                        content: '您的新工作申请已提交成功，雇主将在3个工作日内回复。'
+                    }
+                ]);
+                
+                const timeline = ref([
+                    {
+                        id: 1,
+                        time: '2023-05-16 14:30',
+                        content: '提交了"移动端APP界面设计"项目的初稿'
+                    },
+                    {
+                        id: 2,
+                        time: '2023-05-15 09:15',
+                        content: '接受了"移动端APP界面设计"项目'
+                    },
+                    {
+                        id: 3,
+                        time: '2023-05-12 16:45',
+                        content: '完成了"企业官网改版设计"项目并获得5星评价'
+                    },
+                    {
+                        id: 4,
+                        time: '2023-05-10 11:20',
+                        content: '提交了"企业官网改版设计"项目的最终稿'
+                    }
+                ]);
+                
+                // 工作机会数据
+                const jobFilter = ref({
+                    type: '',
+                    budget: '',
+                    location: ''
+                });
+                
+                const allJobs = ref([
+                    {
+                        id: 1,
+                        title: '移动端APP界面设计',
+                        type: 'design',
+                        budget: '3000',
+                        location: 'remote',
+                        date: '2023-05-15',
+                        client: 'ABC科技有限公司',
+                        description: '为新产品设计移动端APP界面，包括登录页、主页、个人中心等核心页面。要求设计简洁现代，符合产品定位。',
+                        requirements: '1. 3年以上UI设计经验\n2. 有成功的移动端设计案例\n3. 熟练使用Sketch、Figma等设计工具\n4. 对用户体验有深入理解',
+                        tags: ['UI设计', '移动端', '高保真原型'],
+                        price: '¥3,000',
+                        status: '招募中',
+                        isMine: false
+                    },
+                    {
+                        id: 2,
+                        title: '企业官网改版设计',
+                        type: 'design',
+                        budget: '5000',
+                        location: 'beijing',
+                        date: '2023-05-10',
+                        client: 'XYZ企业',
+                        description: '对企业官网进行全新改版设计，包括首页、产品页、关于我们等页面。要求体现企业品牌形象，提升用户体验。',
+                        requirements: '1. 有企业官网设计经验\n2. 能够理解品牌调性并转化为设计语言\n3. 提供响应式设计方案\n4. 能够在2周内完成',
+                        tags: ['网页设计', '响应式', '品牌设计'],
+                        price: '¥5,000',
+                        status: '招募中',
+                        isMine: false
+                    },
+                    {
+                        id: 3,
+                        title: '电商平台UX优化',
+                        type: 'design',
+                        budget: '4500',
+                        location: 'remote',
+                        date: '2023-05-05',
+                        client: '电商平台',
+                        description: '对现有电商平台进行UX优化，分析用户行为数据，提出改进方案并设计原型。需要有相关电商设计经验。',
+                        requirements: '1. 有电商平台设计经验\n2. 熟悉用户研究方法\n3. 能够基于数据提出优化方案\n4. 提供高保真原型',
+                        tags: ['UX设计', '用户研究', '原型设计'],
+                        price: '¥4,500',
+                        status: '招募中',
+                        isMine: false
+                    },
+                    {
+                        id: 4,
+                        title: '微信小程序开发',
+                        type: 'tech',
+                        budget: '6000',
+                        location: 'shanghai',
+                        date: '2023-05-18',
+                        client: '创业公司',
+                        description: '开发一款基于微信小程序的社交应用，需要前端开发人员，熟悉微信小程序开发流程。',
+                        requirements: '1. 2年以上微信小程序开发经验\n2. 熟悉微信生态API\n3. 能够独立完成前端开发\n4. 有社交类应用开发经验优先',
+                        tags: ['小程序', '前端开发', 'JavaScript'],
+                        price: '¥6,000',
+                        status: '招募中',
+                        isMine: false
+                    },
+                    {
+                        id: 5,
+                        title: '产品文案撰写',
+                        type: 'writing',
+                        budget: '2000',
+                        location: 'remote',
+                        date: '2023-05-20',
+                        client: '科技公司',
+                        description: '为新产品撰写产品介绍、功能说明等文案，要求语言简洁有力，能够准确传达产品价值。',
+                        requirements: '1. 有科技类产品文案经验\n2. 文笔流畅，逻辑清晰\n3. 能够快速理解产品特性\n4. 3天内完成',
+                        tags: ['文案写作', '产品文案', '内容创作'],
+                        price: '¥2,000',
+                        status: '招募中',
+                        isMine: true
+                    }
+                ]);
+                
+                const filteredJobs = ref(allJobs.value);
+                
+                // 工作者数据
+                const workerFilter = ref({
+                    skill: '',
+                    rating: '',
+                    rate: ''
+                });
+                
+                const allWorkers = ref([
+                    {
+                        id: 1,
+                        name: '张晓丽',
+                        title: 'UI/UX设计师',
+                        avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+                        location: '北京',
+                        bio: '5年UI/UX设计经验，擅长移动端和网页设计，曾为多家知名企业提供设计服务。注重用户体验，追求细节完美。',
+                        skills: ['UI设计', 'UX设计', '移动端设计', '网页设计', '原型设计'],
+                        rating: 4.8,
+                        reviews: 12,
+                        completedJobs: 15,
+                        rate: '¥200',
+                        experience: [
+                            {
+                                id: 1,
+                                company: '互联网科技公司',
+                                position: '高级UI设计师',
+                                period: '2019-至今',
+                                description: '负责公司核心产品的UI设计工作，主导多个项目的设计方向，提升用户体验和产品转化率。'
+                            },
+                            {
+                                id: 2,
+                                company: '设计工作室',
+                                position: 'UI设计师',
+                                period: '2017-2019',
+                                description: '参与多个企业客户的设计项目，包括品牌设计、网页设计和移动端设计。'
+                            }
+                        ],
+                        portfolio: [
+                            {
+                                id: 1,
+                                title: '电商APP设计',
+                                description: '为知名电商平台设计的移动端应用，提升了30%的用户留存率。',
+                                image: 'https://via.placeholder.com/300x200/409EFF/FFFFFF?text=电商APP'
+                            },
+                            {
+                                id: 2,
+                                title: '企业官网设计',
+                                description: '为科技公司设计的响应式官网，充分体现了品牌形象。',
+                                image: 'https://via.placeholder.com/300x200/67C23A/FFFFFF?text=企业官网'
+                            },
+                            {
+                                id: 3,
+                                title: '社交应用原型',
+                                description: '为创业公司设计的社交应用原型，获得客户高度评价。',
+                                image: 'https://via.placeholder.com/300x200/E6A23C/FFFFFF?text=社交应用'
+                            }
+                        ],
+                        reviewList: [
+                            {
+                                id: 1,
+                                name: '李经理',
+                                avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+                                rating: 5,
+                                time: '2023-04-15',
+                                content: '张设计师的作品非常出色，能够准确把握我们的需求，设计出来的界面既美观又实用，用户体验提升明显。'
+                            },
+                            {
+                                id: 2,
+                                name: '王总监',
+                                avatar: 'https://randomuser.me/api/portraits/women/22.jpg',
+                                rating: 4.5,
+                                time: '2023-03-10',
+                                content: '合作非常愉快，专业能力强，能够按时交付高质量的成果，沟通也很顺畅。'
+                            }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        name: '王大明',
+                        title: '前端开发工程师',
+                        avatar: 'https://randomuser.me/api/portraits/men/46.jpg',
+                        location: '上海',
+                        bio: '全栈开发工程师，6年开发经验，精通Vue、React等前端框架，熟悉Node.js后端开发。能够独立完成全栈项目。',
+                        skills: ['Vue.js', 'React', 'Node.js', 'JavaScript', 'HTML/CSS'],
+                        rating: 4.7,
+                        reviews: 8,
+                        completedJobs: 10,
+                        rate: '¥250',
+                        experience: [
+                            {
+                                id: 1,
+                                company: '科技公司',
+                                position: '高级前端工程师',
+                                period: '2020-至今',
+                                description: '负责公司核心产品的前端架构设计和开发，主导技术选型和团队建设。'
+                            },
+                            {
+                                id: 2,
+                                company: '互联网公司',
+                                position: '前端开发工程师',
+                                period: '2017-2020',
+                                description: '参与多个大型项目的前端开发工作，积累了丰富的实战经验。'
+                            }
+                        ],
+                        portfolio: [
+                            {
+                                id: 1,
+                                title: '电商平台前端',
+                                description: '使用Vue.js开发的电商平台前端，日均PV超过10万。',
+                                image: 'https://via.placeholder.com/300x200/409EFF/FFFFFF?text=电商平台'
+                            },
+                            {
+                                id: 2,
+                                title: '管理系统',
+                                description: '基于React的后台管理系统，提高了客户的工作效率。',
+                                image: 'https://via.placeholder.com/300x200/67C23A/FFFFFF?text=管理系统'
+                            }
+                        ],
+                        reviewList: [
+                            {
+                                id: 1,
+                                name: '张经理',
+                                avatar: 'https://randomuser.me/api/portraits/women/33.jpg',
+                                rating: 5,
+                                time: '2023-05-10',
+                                content: '王工程师技术非常扎实，能够快速理解需求并实现，代码质量高，沟通也很顺畅。'
+                            },
+                            {
+                                id: 2,
+                                name: '李总监',
+                                avatar: 'https://randomuser.me/api/portraits/men/22.jpg',
+                                rating: 4,
+                                time: '2023-04-05',
+                                content: '项目按时完成，质量符合预期，遇到问题能够积极解决，是值得信赖的开发者。'
+                            }
+                        ]
+                    },
+                    {
+                        id: 3,
+                        name: '李小红',
+                        title: '文案策划',
+                        avatar: 'https://randomuser.me/api/portraits/women/28.jpg',
+                        location: '广州',
+                        bio: '资深文案策划，4年经验，擅长产品文案、品牌故事和营销内容创作。能够准确把握品牌调性，用文字打动用户。',
+                        skills: ['产品文案', '品牌故事', '营销内容', '社交媒体', '广告文案'],
+                        rating: 4.6,
+                        reviews: 6,
+                        completedJobs: 8,
+                        rate: '¥150',
+                        experience: [
+                            {
+                                id: 1,
+                                company: '广告公司',
+                                position: '资深文案',
+                                period: '2019-至今',
+                                description: '为多个品牌客户提供文案服务，包括品牌故事、产品文案和广告文案。'
+                            },
+                            {
+                                id: 2,
+                                company: '媒体公司',
+                                position: '文案编辑',
+                                period: '2017-2019',
+                                description: '负责网站内容编辑和原创内容撰写，积累了丰富的写作经验。'
+                            }
+                        ],
+                        portfolio: [
+                            {
+                                id: 1,
+                                title: '品牌故事',
+                                description: '为新兴品牌撰写的品牌故事，帮助客户建立了鲜明的品牌形象。',
+                                image: 'https://via.placeholder.com/300x200/409EFF/FFFFFF?text=品牌故事'
+                            },
+                            {
+                                id: 2,
+                                title: '产品文案',
+                                description: '为科技产品撰写的一系列产品文案，提升了产品的市场表现。',
+                                image: 'https://via.placeholder.com/300x200/67C23A/FFFFFF?text=产品文案'
+                            }
+                        ],
+                        reviewList: [
+                            {
+                                id: 1,
+                                name: '王经理',
+                                avatar: 'https://randomuser.me/api/portraits/men/45.jpg',
+                                rating: 5,
+                                time: '2023-03-15',
+                                content: '李文案的文字非常有感染力，能够准确把握我们的品牌调性，写出的文案既专业又有温度。'
+                            }
+                        ]
+                    },
+                    {
+                        id: 4,
+                        name: '赵强',
+                        title: '市场营销专家',
+                        avatar: 'https://randomuser.me/api/portraits/men/63.jpg',
+                        location: '深圳',
+                        bio: '数字营销专家，7年经验，擅长社交媒体营销、内容营销和增长黑客。曾帮助多家企业实现用户和收入增长。',
+                        skills: ['社交媒体', '内容营销', '增长黑客', 'SEO', '数据分析'],
+                        rating: 4.9,
+                        reviews: 15,
+                        completedJobs: 20,
+                        rate: '¥300',
+                        experience: [
+                            {
+                                id: 1,
+                                company: '电商公司',
+                                position: '营销总监',
+                                period: '2020-至今',
+                                description: '负责公司整体营销策略制定和执行，带领团队实现业绩增长。'
+                            },
+                            {
+                                id: 2,
+                                company: '互联网公司',
+                                position: '营销经理',
+                                period: '2016-2020',
+                                description: '负责数字营销渠道的运营和优化，积累了丰富的实战经验。'
+                            }
+                        ],
+                        portfolio: [
+                            {
+                                id: 1,
+                                title: '社交媒体营销',
+                                description: '为品牌策划的社交媒体营销活动，带来了50万新增粉丝。',
+                                image: 'https://via.placeholder.com/300x200/409EFF/FFFFFF?text=社交媒体'
+                            },
+                            {
+                                id: 2,
+                                title: '内容营销',
+                                description: '策划的内容营销方案，提升了品牌知名度和转化率。',
+                                image: 'https://via.placeholder.com/300x200/67C23A/FFFFFF?text=内容营销'
+                            }
+                        ],
+                        reviewList: [
+                            {
+                                id: 1,
+                                name: '张总',
+                                avatar: 'https://randomuser.me/api/portraits/women/55.jpg',
+                                rating: 5,
+                                time: '2023-05-05',
+                                content: '赵专家的营销方案非常专业，执行效果超出预期，为我们带来了显著的业绩增长。'
+                            },
+                            {
+                                id: 2,
+                                name: '李经理',
+                                avatar: 'https://randomuser.me/api/portraits/men/33.jpg',
+                                rating: 5,
+                                time: '2023-04-12',
+                                content: '合作非常愉快，专业能力强，能够根据我们的实际情况制定有效的营销策略。'
+                            }
+                        ]
+                    }
+                ]);
+                
+                const filteredWorkers = ref(allWorkers.value);
+                
+                // 个人中心数据
+                const activeStatTab = ref('completed');
+                
+                const userReviews = ref([
+                    {
+                        id: 1,
+                        name: '李经理',
+                        avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+                        rating: 5,
+                        time: '2023-04-15',
+                        content: '张设计师的作品非常出色，能够准确把握我们的需求，设计出来的界面既美观又实用，用户体验提升明显。'
+                    },
+                    {
+                        id: 2,
+                        name: '王总监',
+                        avatar: 'https://randomuser.me/api/portraits/women/22.jpg',
+                        rating: 4.5,
+                        time: '2023-03-10',
+                        content: '合作非常愉快，专业能力强，能够按时交付高质量的成果，沟通也很顺畅。'
+                    },
+                    {
+                        id: 3,
+                        name: '赵总',
+                        avatar: 'https://randomuser.me/api/portraits/men/45.jpg',
+                        rating: 5,
+                        time: '2023-02-28',
+                        content: '非常专业的设计师，能够理解我们的品牌理念并将其转化为设计语言，期待再次合作。'
+                    }
+                ]);
+                
+                // 账户设置数据
+                const userForm = ref({
+                    name: '张晓丽',
+                    title: 'UI/UX设计师',
+                    bio: '5年UI/UX设计经验，擅长移动端和网页设计，曾为多家知名企业提供设计服务。注重用户体验，追求细节完美。',
+                    skills: ['UI设计', 'UX设计', '移动端设计', '网页设计', '原型设计']
+                });
+                
+                const contactForm = ref({
+                    email: 'zhangxiaoli@example.com',
+                    phone: '13800138000',
+                    location: 'beijing'
+                });
+                
+                const securityForm = ref({
+                    currentPassword: '',
+                    newPassword: '',
+                    confirmPassword: ''
+                });
+                
+                // 技能标签编辑
+                const skillInputVisible = ref(false);
+                const skillInputValue = ref('');
+                
+                const showSkillInput = () => {
+                    skillInputVisible.value = true;
+                    nextTick(() => {
+                        document.querySelector('.input-new-tag input').focus();
+                    });
+                };
+                
+                const handleSkillInputConfirm = () => {
+                    if (skillInputValue.value) {
+                        userForm.value.skills.push(skillInputValue.value);
+                        skillInputValue.value = '';
+                    }
+                    skillInputVisible.value = false;
+                };
+                
+                const handleSkillClose = (tag) => {
+                    userForm.value.skills = userForm.value.skills.filter(item => item !== tag);
+                };
+                
+                // 保存个人资料
+                const saveProfile = () => {
+                    ElMessage.success('个人资料已保存');
+                    user.value.name = userForm.value.name;
+                    user.value.title = userForm.value.title;
+                    user.value.bio = userForm.value.bio;
+                    user.value.skills = [...userForm.value.skills];
+                };
+                
+                // 保存联系方式
+                const saveContact = () => {
+                    ElMessage.success('联系方式已保存');
+                    user.value.email = contactForm.value.email;
+                    user.value.phone = contactForm.value.phone;
+                    user.value.location = contactForm.value.location === 'beijing' ? '北京' : 
+                                        contactForm.value.location === 'shanghai' ? '上海' : 
+                                        contactForm.value.location === 'guangzhou' ? '广州' : 
+                                        contactForm.value.location === 'shenzhen' ? '深圳' : '其他';
+                };
+                
+                // 修改密码
+                const changePassword = () => {
+                    if (securityForm.value.newPassword !== securityForm.value.confirmPassword) {
+                        ElMessage.error('两次输入的新密码不一致');
+                        return;
+                    }
+                    ElMessage.success('密码修改成功');
+                    securityForm.value = {
+                        currentPassword: '',
+                        newPassword: '',
+                        confirmPassword: ''
+                    };
+                };
+                
+                // 工作详情对话框
+                const jobDetailVisible = ref(false);
+                const selectedJob = ref(null);
+                
+                const viewJobDetail = (job) => {
+                    selectedJob.value = job;
+                    jobDetailVisible.value = true;
+                };
+                
+                const jobApplication = ref({
+                    price: 1000,
+                    days: 7,
+                    message: ''
+                });
+                
+                const applyJob = () => {
+                    ElMessage.success('工作申请已提交');
+                    jobDetailVisible.value = false;
+                };
+                
+                const saveJob = () => {
+                    ElMessage.success('工作信息已保存');
+                    jobDetailVisible.value = false;
+                };
+                
+                // 工作者详情对话框
+                const workerDetailVisible = ref(false);
+                const selectedWorker = ref(null);
+                
+                const viewWorkerDetail = (worker) => {
+                    selectedWorker.value = worker;
+                    workerDetailVisible.value = true;
+                };
+                
+                const sendMessageToWorker = () => {
+                    ElMessage.success('消息已发送');
+                    workerDetailVisible.value = false;
+                    switchPage('messages');
+                };
+                
+                // 发布工作对话框
+                const showPostJobDialog = ref(false);
+                
+                const newJob = ref({
+                    title: '',
+                    type: '',
+                    budget: 1000,
+                    location: '',
+                    description: '',
+                    requirements: '',
+                    tags: []
+                });
+                
+                const fileList = ref([]);
+                
+                const handleExceed = () => {
+                    ElMessage.warning('最多只能上传3个文件');
+                };
+                
+                // 工作标签编辑
+                const jobTagInputVisible = ref(false);
+                const jobTagInputValue = ref('');
+                
+                const showJobTagInput = () => {
+                    jobTagInputVisible.value = true;
+                    nextTick(() => {
+                        document.querySelectorAll('.input-new-tag input')[1].focus();
+                    });
+                };
+                
+                const handleJobTagInputConfirm = () => {
+                    if (jobTagInputValue.value) {
+                        newJob.value.tags.push(jobTagInputValue.value);
+                        jobTagInputValue.value = '';
+                    }
+                    jobTagInputVisible.value = false;
+                };
+                
+                const handleJobTagClose = (tag) => {
+                    newJob.value.tags = newJob.value.tags.filter(item => item !== tag);
+                };
+                
+                const postNewJob = () => {
+                    const job = {
+                        id: allJobs.value.length + 1,
+                        title: newJob.value.title,
+                        type: newJob.value.type,
+                        budget: newJob.value.budget.toString(),
+                        location: newJob.value.location,
+                        date: new Date().toISOString().split('T')[0],
+                        client: user.value.name,
+                        description: newJob.value.description,
+                        requirements: newJob.value.requirements,
+                        tags: [...newJob.value.tags],
+                        price: `¥${newJob.value.budget}`,
+                        status: '招募中',
+                        isMine: true
+                    };
+                    
+                    allJobs.value.unshift(job);
+                    filteredJobs.value = [...allJobs.value];
+                    
+                    ElMessage.success('工作发布成功');
+                    showPostJobDialog.value = false;
+                    
+                    // 重置表单
+                    newJob.value = {
+                        title: '',
+                        type: '',
+                        budget: 1000,
+                        location: '',
+                        description: '',
+                        requirements: '',
+                        tags: []
+                    };
+                };
+                
+                // 邀请工作对话框
+                const showInviteDialog = ref(false);
+                
+                const inviteForm = ref({
+                    title: '',
+                    budget: 2000,
+                    days: 14,
+                    description: '',
+                    message: ''
+                });
+                
+                const sendInvitation = () => {
+                    ElMessage.success(`邀请已发送给 ${selectedWorker.value.name}`);
+                    showInviteDialog.value = false;
+                };
+                
+                // 消息中心
+                const selectedConversation = ref(null);
+                
+                const conversationMessages = ref([
+                    {
+                        id: 1,
+                        sender: '李经理',
+                        avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+                        content: '您好，关于我们APP设计的项目，有几个细节想和您讨论一下，请问什么时候方便？',
+                        time: '10:30',
+                        isMe: false
+                    },
+                    {
+                        id: 2,
+                        sender: '我',
+                        avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+                        content: '您好，我明天下午2点后都有时间，您看方便吗？',
+                        time: '10:35',
+                        isMe: true
+                    },
+                    {
+                        id: 3,
+                        sender: '李经理',
+                        avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+                        content: '好的，那我们就定在明天下午3点，我会把会议链接发到您的邮箱。',
+                        time: '10:38',
+                        isMe: false
+                    }
+                ]);
+                
+                const newMessage = ref('');
+                
+                const selectConversation = (message) => {
+                    selectedConversation.value = message;
+                };
+                
+                const sendMessage = () => {
+                    if (!newMessage.value.trim()) return;
+                    
+                    const message = {
+                        id: conversationMessages.value.length + 1,
+                        sender: '我',
+                        avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+                        content: newMessage.value,
+                        time: '刚刚',
+                        isMe: true
+                    };
+                    
+                    conversationMessages.value.push(message);
+                    newMessage.value = '';
+                };
+                
+                // 搜索工作
+                const searchJobs = () => {
+                    filteredJobs.value = allJobs.value.filter(job => {
+                        const typeMatch = !jobFilter.value.type || job.type === jobFilter.value.type;
+                        const budgetMatch = !jobFilter.value.budget || (
+                            jobFilter.value.budget === '0-500' && parseInt(job.budget) <= 500 ||
+                            jobFilter.value.budget === '500-1000' && parseInt(job.budget) > 500 && parseInt(job.budget) <= 1000 ||
+                            jobFilter.value.budget === '1000-3000' && parseInt(job.budget) > 1000 && parseInt(job.budget) <= 3000 ||
+                            jobFilter.value.budget === '3000+' && parseInt(job.budget) > 3000
+                        );
+                        const locationMatch = !jobFilter.value.location || job.location === jobFilter.value.location;
+                        
+                        return typeMatch && budgetMatch && locationMatch;
+                    });
+                };
+                
+                const resetJobFilter = () => {
+                    jobFilter.value = {
+                        type: '',
+                        budget: '',
+                        location: ''
+                    };
+                    filteredJobs.value = allJobs.value;
+                };
+                
+                const handleJobPageChange = (page) => {
+                    console.log(`切换到第${page}页`);
+                };
+                
+                // 搜索工作者
+                const searchWorkers = () => {
+                    filteredWorkers.value = allWorkers.value.filter(worker => {
+                        const skillMatch = !workerFilter.value.skill || worker.skills.some(skill => 
+                            skill.toLowerCase().includes(workerFilter.value.skill.toLowerCase()));
+                        const ratingMatch = !workerFilter.value.rating || worker.rating >= parseFloat(workerFilter.value.rating);
+                        const rateMatch = !workerFilter.value.rate || (
+                            workerFilter.value.rate === '0-100' && parseInt(worker.rate.substring(1)) <= 100 ||
+                            workerFilter.value.rate === '100-200' && parseInt(worker.rate.substring(1)) > 100 && parseInt(worker.rate.substring(1)) <= 200 ||
+                            workerFilter.value.rate === '200-300' && parseInt(worker.rate.substring(1)) > 200 && parseInt(worker.rate.substring(1)) <= 300 ||
+                            workerFilter.value.rate === '300+' && parseInt(worker.rate.substring(1)) > 300
+                        );
+                        
+                        return skillMatch && ratingMatch && rateMatch;
+                    });
+                };
+                
+                const resetWorkerFilter = () => {
+                    workerFilter.value = {
+                        skill: '',
+                        rating: '',
+                        rate: ''
+                    };
+                    filteredWorkers.value = allWorkers.value;
+                };
+                
+                const handleWorkerPageChange = (page) => {
+                    console.log(`切换到第${page}页`);
+                };
+                
+                return {
+                    currentPage,
+                    user,
+                    switchPage,
+                    logout,
+                    rating,
+                    recentJobs,
+                    messages,
+                    timeline,
+                    jobFilter,
+                    filteredJobs,
+                    workerFilter,
+                    filteredWorkers,
+                    activeStatTab,
+                    userReviews,
+                    userForm,
+                    contactForm,
+                    securityForm,
+                    skillInputVisible,
+                    skillInputValue,
+                    showSkillInput,
+                    handleSkillInputConfirm,
+                    handleSkillClose,
+                    saveProfile,
+                    saveContact,
+                    changePassword,
+                    jobDetailVisible,
+                    selectedJob,
+                    jobApplication,
+                    viewJobDetail,
+                    applyJob,
+                    saveJob,
+                    workerDetailVisible,
+                    selectedWorker,
+                    viewWorkerDetail,
+                    sendMessageToWorker,
+                    showPostJobDialog,
+                    newJob,
+                    fileList,
+                    handleExceed,
+                    jobTagInputVisible,
+                    jobTagInputValue,
+                    showJobTagInput,
+                    handleJobTagInputConfirm,
+                    handleJobTagClose,
+                    postNewJob,
+                    showInviteDialog,
+                    inviteForm,
+                    sendInvitation,
+                    selectedConversation,
+                    conversationMessages,
+                    newMessage,
+                    selectConversation,
+                    sendMessage,
+                    searchJobs,
+                    resetJobFilter,
+                    handleJobPageChange,
+                    searchWorkers,
+                    resetWorkerFilter,
+                    handleWorkerPageChange
+                };
+            }
+        }).use(ElementPlus).mount('#app');
+    </script>
+</body>
+</html>
